@@ -6,178 +6,236 @@
 <title>Inbox Firewall</title>
 <style>
 :root{
-  --bg:#f6f5f1;--panel:#ffffff;--sunk:#efede7;--fg:#1d1d1b;--muted:#6b6a65;--line:#e2dfd7;
-  --accent:#c96442;--accent-soft:#f6e3db;
-  --q:#1f7a3a;--q-soft:#dff1e4;--s:#a35f00;--s-soft:#fbecd2;--a:#b3261e;--a-soft:#f9dedc;
-  --mark:#ffe08a;--mark-fg:#1d1d1b;
-  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+  --bg:#ffffff;--tile:#f5f5f7;--inset:#ffffff;--fg:#1d1d1f;--muted:#6e6e73;--line:#d2d2d7;
+  --blue:#0071e3;--link:#0066cc;--accent:#0071e3;--accent-soft:#e8f1fc;
+  --q:#248a3d;--q-soft:#e3f5e7;--s:#b25000;--s-soft:#fdf0e3;--a:#d70015;--a-soft:#fde7e9;
+  --mark:#ffe58f;--mark-fg:#1d1d1f;--nav:rgba(255,255,255,.72);--shadow:0 4px 24px rgba(0,0,0,.06);
+  --grad:linear-gradient(90deg,#0071e3,#8e44ec);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#171715;--panel:#21211f;--sunk:#1b1b19;--fg:#ecebe6;--muted:#a3a29b;--line:#363632;
-    --accent:#e08a6a;--accent-soft:#3a2a23;
-    --q:#8fd19e;--q-soft:#1f3326;--s:#ffc46b;--s-soft:#3a2f1b;--a:#f2a29c;--a-soft:#3d2321;
-    --mark:#7a6420;--mark-fg:#fff6d6;--shadow:none;
+    --bg:#000000;--tile:#161617;--inset:#000000;--fg:#f5f5f7;--muted:#86868b;--line:#424245;
+    --blue:#0071e3;--link:#2997ff;--accent:#2997ff;--accent-soft:#0b2540;
+    --q:#30d158;--q-soft:#0f2e19;--s:#ff9f0a;--s-soft:#33230a;--a:#ff453a;--a-soft:#3a1412;
+    --mark:#6b5a12;--mark-fg:#fff5c2;--nav:rgba(22,22,23,.72);--shadow:none;
+    --grad:linear-gradient(90deg,#2997ff,#bf5af2);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#171715;--panel:#21211f;--sunk:#1b1b19;--fg:#ecebe6;--muted:#a3a29b;--line:#363632;
-  --accent:#e08a6a;--accent-soft:#3a2a23;
-  --q:#8fd19e;--q-soft:#1f3326;--s:#ffc46b;--s-soft:#3a2f1b;--a:#f2a29c;--a-soft:#3d2321;
-  --mark:#7a6420;--mark-fg:#fff6d6;--shadow:none;
+  --bg:#000000;--tile:#161617;--inset:#000000;--fg:#f5f5f7;--muted:#86868b;--line:#424245;
+  --blue:#0071e3;--link:#2997ff;--accent:#2997ff;--accent-soft:#0b2540;
+  --q:#30d158;--q-soft:#0f2e19;--s:#ff9f0a;--s-soft:#33230a;--a:#ff453a;--a-soft:#3a1412;
+  --mark:#6b5a12;--mark-fg:#fff5c2;--nav:rgba(22,22,23,.72);--shadow:none;
+  --grad:linear-gradient(90deg,#2997ff,#bf5af2);
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 html,body{margin:0;background:var(--bg);color:var(--fg)}
-body{font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
-button,input,textarea{font:inherit;color:inherit}
-.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
-header.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-bottom:6px}
-header.top h1{font-size:22px;margin:0;letter-spacing:-.01em}
-header.top .tagline{color:var(--muted);font-size:14px;flex:1 1 320px}
-.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;font-weight:600;font-size:14px}
+body{font:17px/1.47 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.022em;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+h1,h2,h3,.display{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif}
+.mono,pre,textarea{font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;letter-spacing:0}
+
+/* global nav: frosted, sticky */
+.globalnav{position:sticky;top:0;z-index:10;background:var(--nav);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.gn-inner{max-width:1024px;margin:0 auto;padding:0 16px;height:48px;display:flex;align-items:center;gap:16px}
+.brand{font-weight:600;font-size:15px;white-space:nowrap}
+.tabs{display:flex;gap:2px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{background:none;border:0;padding:6px 12px;cursor:pointer;color:var(--fg);opacity:.8;font-size:13px;font-weight:400;white-space:nowrap;border-radius:999px;transition:opacity .2s,background .2s}
+.tabs button:hover{opacity:1}
+.tabs button[aria-selected="true"]{opacity:1;background:var(--tile);font-weight:600}
+@media (max-width:640px){.brand{display:none}.tabs{margin:0}}
+
+/* switch */
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;font-size:13px;white-space:nowrap}
 .switch input{position:absolute;opacity:0;width:0;height:0}
-.switch .track{width:42px;height:24px;border-radius:12px;background:var(--line);position:relative;transition:background .2s}
-.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.switch .track{width:38px;height:22px;border-radius:11px;background:var(--line);position:relative;transition:background .25s}
+.switch .track::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 4px rgba(0,0,0,.2)}
 .switch input:checked + .track{background:var(--q)}
-.switch input:checked + .track::after{transform:translateX(18px)}
-.switch input:focus-visible + .track{outline:2px solid var(--accent);outline-offset:2px}
-nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:14px 0 20px;overflow-x:auto}
-nav.tabs button{background:none;border:0;padding:10px 14px;cursor:pointer;color:var(--muted);font-weight:600;border-bottom:2px solid transparent;white-space:nowrap}
-nav.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
-.muted{color:var(--muted)} .small{font-size:13px} .tiny{font-size:12px}
-.btn{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
-.btn:hover{border-color:var(--muted)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.primary:hover{filter:brightness(1.05)}
-.btn:disabled{opacity:.5;cursor:default}
-.btn:focus-visible,nav.tabs button:focus-visible,.steps button:focus-visible,.mail-row:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.switch input:checked + .track::after{transform:translateX(16px)}
+.switch input:focus-visible + .track{outline:2px solid var(--link);outline-offset:2px}
+
+/* hero */
+.hero{text-align:center;padding:88px 16px 56px;max-width:980px;margin:0 auto}
+.eyebrow{color:var(--s);font-size:17px;font-weight:600;margin:0 0 6px}
+.hero h1{font-size:clamp(44px,8vw,80px);line-height:1.05;font-weight:600;letter-spacing:-.015em;margin:0}
+.hero h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{font-size:clamp(21px,3vw,28px);line-height:1.2;font-weight:400;letter-spacing:.004em;margin:14px auto 0;max-width:760px}
+.hero-ctas{display:flex;justify-content:center;gap:28px;margin-top:22px;flex-wrap:wrap}
+.cta{color:var(--link);text-decoration:none;font-size:19px;cursor:pointer;background:none;border:0;padding:0}
+.cta:hover{text-decoration:underline}
+.cta::after{content:" ›"}
+.cta.fill{background:var(--blue);color:#fff;padding:11px 22px;border-radius:980px;font-size:17px}
+.cta.fill::after{content:""}
+.cta.fill:hover{text-decoration:none;filter:brightness(1.08)}
+
+.wrap{max-width:1024px;margin:0 auto;padding:0 16px 80px;scroll-margin-top:64px}
+.section-head{text-align:center;margin:8px auto 36px;max-width:760px}
+.section-head .eyebrow{font-size:15px}
+.section-head h2{font-size:clamp(32px,5vw,48px);line-height:1.08;font-weight:600;letter-spacing:-.003em;margin:0}
+.section-head p{color:var(--muted);font-size:19px;margin:12px 0 0}
+
+/* tiles */
+.panel{background:var(--tile);border:0;border-radius:18px}
+.muted{color:var(--muted)} .small{font-size:14px} .tiny{font-size:12px;letter-spacing:-.01em}
+.btn{background:transparent;border:1px solid var(--link);color:var(--link);border-radius:980px;padding:8px 18px;cursor:pointer;font-size:15px;font-weight:400;transition:background .2s,color .2s}
+.btn:hover{background:var(--link);color:#fff}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.4;cursor:default;filter:none}
+.btn:focus-visible,.tabs button:focus-visible,.steps button:focus-visible,.mail-row:focus-visible,.cta:focus-visible{outline:2px solid var(--link);outline-offset:3px}
+.pill{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap}
 .pill.quarantine{background:var(--q-soft);color:var(--q)}
 .pill.strip{background:var(--s-soft);color:var(--s)}
 .pill.allow{background:var(--a-soft);color:var(--a)}
-.pill.neutral{background:var(--sunk);color:var(--muted)}
-.tag{display:inline-block;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 7px;white-space:nowrap}
-.tag.hot{color:var(--accent);border-color:var(--accent)}
-mark{background:var(--mark);color:var(--mark-fg);border-radius:3px;padding:0 1px}
-mark.flash{animation:flash .6s ease-out}
-@keyframes flash{from{box-shadow:0 0 0 4px var(--accent)}to{box-shadow:0 0 0 0 transparent}}
+.pill.neutral{background:var(--bg);color:var(--muted)}
+.tag{display:inline-block;font-size:12px;color:var(--muted);background:var(--bg);border-radius:999px;padding:2px 10px;white-space:nowrap;letter-spacing:-.01em}
+.tag.hot{color:var(--s);background:var(--s-soft)}
+mark{background:var(--mark);color:var(--mark-fg);border-radius:4px;padding:0 2px}
+mark.flash{animation:flash .7s ease-out both}
+@keyframes flash{from{box-shadow:0 0 0 6px color-mix(in srgb,var(--mark) 70%,transparent)}to{box-shadow:0 0 0 0 transparent}}
 
 /* email card */
-.mail{padding:16px 18px}
-.mail .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.mail .subj{font-weight:700;font-size:16px;margin:0 0 8px;word-break:break-word;white-space:pre-wrap}
-.mail .body{white-space:pre-wrap;word-break:break-word;font-size:14px;max-height:340px;overflow:auto;background:var(--sunk);border-radius:8px;padding:12px;margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.55}
+.mail{padding:24px}
+.mail .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.mail .subj{font-weight:600;font-size:21px;line-height:1.24;margin:0 0 14px;word-break:break-word;white-space:pre-wrap;letter-spacing:.006em}
+.mail .body{white-space:pre-wrap;word-break:break-word;max-height:360px;overflow:auto;background:var(--inset);border-radius:12px;padding:16px;margin:0;font-size:13px;line-height:1.6}
 
-/* verdict block */
-.verdict{display:grid;gap:12px}
-.stamp{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.stamp .word{font-size:28px;font-weight:800;letter-spacing:.02em;text-transform:uppercase}
+/* verdict */
+.verdict{display:grid;gap:14px}
+.stamp{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.stamp .word{font-size:44px;line-height:1;font-weight:600;letter-spacing:-.01em;text-transform:capitalize;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif}
 .stamp .word.quarantine{color:var(--q)} .stamp .word.strip{color:var(--s)} .stamp .word.allow{color:var(--a)}
-.stamp .word.pop{animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
-@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
-.meter{position:relative;height:12px;background:var(--sunk);border-radius:6px;overflow:visible;margin:18px 0 22px}
-.meter .fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:6px;background:var(--accent);transition:width .5s ease}
-.meter .tick{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--fg);opacity:.5}
-.meter .tick span{position:absolute;top:22px;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}
-.reasons{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-.reasons li{display:flex;justify-content:space-between;gap:12px;padding:6px 10px;background:var(--sunk);border-radius:6px;font-size:13.5px}
-.reasons li.in{animation:slide .3s ease-out both}
-@keyframes slide{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
-.reasons .w{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
-.agentview{border:1px dashed var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px}
-.agentview .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
-.agentview pre{white-space:pre-wrap;word-break:break-word;margin:0;font-size:12.5px;max-height:160px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.stamp .word.pop{animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes pop{from{transform:translateY(8px) scale(.94);opacity:0}to{transform:none;opacity:1}}
+.meter{position:relative;height:6px;background:var(--bg);border-radius:3px;margin:16px 0 26px}
+.meter .fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:3px;background:var(--grad);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.meter .tick{position:absolute;top:-5px;bottom:-5px;width:1px;background:var(--muted)}
+.meter .tick span{position:absolute;top:18px;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}
+.reasons{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.reasons li{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;background:var(--bg);font-size:15px}
+.reasons li:first-child{border-radius:12px 12px 0 0} .reasons li:last-child{border-radius:0 0 12px 12px} .reasons li:only-child{border-radius:12px}
+.reasons li.in{animation:slide .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes slide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.reasons .w{font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.agentview{background:var(--bg);border-radius:12px;padding:14px 16px;font-size:15px}
+.agentview .label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px}
+.agentview pre{white-space:pre-wrap;word-break:break-word;margin:0;font-size:12.5px;max-height:170px;overflow:auto}
 .held{color:var(--q);font-weight:600}
 .danger{color:var(--a);font-weight:600}
 
 /* demo */
-.steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.steps button{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 6px;cursor:pointer;color:var(--muted);font-weight:600;font-size:13.5px}
-.steps button .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--sunk);font-size:12px}
-.steps button[aria-current="step"]{color:var(--fg);border-color:var(--accent)}
-.steps button[aria-current="step"] .n{background:var(--accent);color:#fff}
-.steps button.done .n{background:var(--q-soft);color:var(--q)}
-.stage{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}
+.steps{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin:0 auto 28px;background:var(--tile);border-radius:999px;padding:4px;width:fit-content;max-width:100%}
+.steps button{display:flex;align-items:center;gap:8px;background:transparent;border:0;border-radius:999px;padding:8px 16px 8px 8px;cursor:pointer;color:var(--muted);font-size:14px;transition:background .25s,color .25s,box-shadow .25s}
+.steps button .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;border:1px solid var(--line)}
+.steps button[aria-current="step"]{background:var(--bg);color:var(--fg);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.steps button[aria-current="step"] .n{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.steps button.done .n{background:var(--q);color:#fff;border-color:var(--q)}
+.stage{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px}
 @media (max-width:860px){.stage{grid-template-columns:1fr}}
-.stage h2{font-size:19px;margin:0 0 4px}
-.side{padding:16px 18px;display:grid;gap:14px;align-content:start}
-.demo-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:12px;flex-wrap:wrap}
-.big-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.big{padding:18px}
-.big .num{font-size:44px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
-.big .num.good{color:var(--q)} .big .num.warn{color:var(--s)}
-.big .what{font-weight:600;margin-top:4px}
-.big .n{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
-.progress{height:6px;background:var(--sunk);border-radius:3px;overflow:hidden}
-.progress div{height:100%;width:0;background:var(--accent);transition:width .1s linear}
-.secondary-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:12px}
-.secondary-stats div{background:var(--sunk);border-radius:8px;padding:8px 12px;font-size:13px}
-.secondary-stats b{font-variant-numeric:tabular-nums}
-.callout{border-left:4px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px}
+.stage h2,.side>h2{font-size:28px;line-height:1.14;font-weight:600;margin:0;letter-spacing:.007em}
+.side{padding:28px;display:grid;gap:18px;align-content:start}
+.side>p{margin:0}
+.side>.btn{justify-self:start}
+.demo-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:12px;flex-wrap:wrap}
+.big-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.big{padding:32px 28px;background:var(--bg)}
+.big .num{font-size:clamp(56px,8vw,80px);font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif}
+.big .num.good{background:linear-gradient(90deg,var(--q),#0a84ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.big .num.warn{background:linear-gradient(90deg,var(--s),#ff375f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.big .what{font-weight:600;font-size:19px;line-height:1.25;margin-top:12px}
+.big .n{color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums;margin-top:4px}
+.progress{height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
+.progress div{height:100%;width:0;background:var(--grad);transition:width .1s linear}
+.secondary-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.secondary-stats div{background:var(--bg);border-radius:12px;padding:12px 16px;font-size:14px;color:var(--muted)}
+.secondary-stats b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums;display:block;font-size:19px}
+.callout{background:var(--bg);border-radius:12px;padding:16px 18px;font-size:15px;line-height:1.5}
+.wrap > section > .callout,.numbers-callout{background:var(--tile)}
 
 /* inbox */
-.inbox{display:grid;grid-template-columns:minmax(260px,380px) minmax(0,1fr);gap:16px;align-items:start}
+.inbox{display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:860px){.inbox{grid-template-columns:1fr}}
-.inbox-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
-.inbox-bar .summary{flex:1 1 300px;font-size:14px}
-.mail-list{max-height:640px;overflow:auto;padding:4px}
-.mail-row{display:grid;gap:2px;padding:10px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent}
-.mail-row:hover{background:var(--sunk)}
-.mail-row[aria-selected="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.inbox-bar{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:20px}
+.inbox-bar .summary{flex:1 1 300px;font-size:17px}
+.mail-list{max-height:700px;overflow:auto;padding:8px}
+.mail-row{display:grid;gap:2px;padding:12px 14px;border-radius:12px;cursor:pointer;transition:background .15s}
+.mail-row + .mail-row{margin-top:2px}
+.mail-row:hover{background:var(--bg)}
+.mail-row[aria-selected="true"]{background:var(--blue);color:#fff}
+.mail-row[aria-selected="true"] .p,.mail-row[aria-selected="true"] .tag{color:rgba(255,255,255,.8);background:rgba(255,255,255,.15)}
 .mail-row .r1{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.mail-row .from{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mail-row .s{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mail-row .p{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mail-row .from{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mail-row .s{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mail-row .p{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mail-row.reached .from::before{content:"● ";color:var(--a)}
+.mail-row[aria-selected="true"].reached .from::before{color:#fff}
 
 /* try */
-.try{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.try{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:860px){.try{grid-template-columns:1fr}}
-.field{display:grid;gap:4px;margin-bottom:10px}
-.field label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.field input,.field textarea{background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
-.field textarea{min-height:240px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
-.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.presets .btn{padding:5px 10px;font-size:13px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:600;color:var(--muted)}
+.field input,.field textarea{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%;transition:border-color .2s,box-shadow .2s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--link);box-shadow:0 0 0 4px color-mix(in srgb,var(--link) 20%,transparent)}
+.field textarea{min-height:260px;resize:vertical;font-size:13px;line-height:1.55}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;justify-content:center}
+.presets .btn{padding:6px 14px;font-size:14px}
+#t-out pre.body{background:var(--bg)!important;border-radius:12px!important;padding:14px!important}
 
 /* numbers */
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.bar{height:8px;background:var(--accent);border-radius:4px;min-width:2px}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
-.pad{padding:16px 18px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:10px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-size:12px;font-weight:600;color:var(--muted)}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+.bar{height:6px;background:var(--grad);border-radius:3px;min-width:2px;margin-top:8px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+.pad{padding:28px}
+.pad h3{font-size:24px;font-weight:600;letter-spacing:.009em;margin:0 0 16px!important}
 .list-mini{display:grid;gap:8px}
-.list-mini details{background:var(--sunk);border-radius:8px;padding:8px 12px}
-.list-mini summary{cursor:pointer;font-size:13.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.list-mini pre{white-space:pre-wrap;word-break:break-word;font-size:12px;max-height:200px;overflow:auto;margin:8px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.list-mini details{background:var(--bg);border-radius:12px;padding:10px 14px}
+.list-mini summary{cursor:pointer;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.list-mini pre{white-space:pre-wrap;word-break:break-word;font-size:12px;max-height:200px;overflow:auto;margin:10px 0 0}
 [hidden]{display:none!important}
-footer{margin-top:28px;font-size:12.5px;color:var(--muted)}
+footer{border-top:1px solid var(--line);margin-top:56px;padding-top:20px;font-size:12px;color:var(--muted);line-height:1.6}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <h1>Inbox Firewall</h1>
-    <div class="tagline">Anyone who can email you can try to give your AI assistant orders. This layer decides what the agent is allowed to read. Runs locally in this page on real attack emails.</div>
+<nav class="globalnav" aria-label="Sections">
+  <div class="gn-inner">
+    <span class="brand">Inbox Firewall</span>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="demo">Live demo</button>
+      <button role="tab" aria-selected="false" data-tab="inbox">Inbox</button>
+      <button role="tab" aria-selected="false" data-tab="try">Try your own</button>
+      <button role="tab" aria-selected="false" data-tab="numbers">Numbers</button>
+    </div>
     <label class="switch" title="Turn the firewall off to see what the agent would read"><input type="checkbox" id="fw-on" checked><span class="track"></span><span id="fw-label">Firewall on</span></label>
-  </header>
+  </div>
+</nav>
 
-  <nav class="tabs" role="tablist">
-    <button role="tab" aria-selected="true" data-tab="demo">Live demo</button>
-    <button role="tab" aria-selected="false" data-tab="inbox">Inbox</button>
-    <button role="tab" aria-selected="false" data-tab="try">Try your own</button>
-    <button role="tab" aria-selected="false" data-tab="numbers">Numbers &amp; limits</button>
-  </nav>
+<header class="hero">
+  <p class="eyebrow">Claude Impact Lab · Track 1</p>
+  <h1>Inbox <span class="grad">Firewall.</span></h1>
+  <p class="hero-sub">Your assistant reads your email.<br>Strangers shouldn&rsquo;t get to give it orders.</p>
+  <div class="hero-ctas">
+    <button class="cta fill" data-go="demo">Watch the demo</button>
+    <button class="cta" data-go="try">Try your own</button>
+    <button class="cta" data-go="numbers">See the numbers</button>
+  </div>
+</header>
 
+<div class="wrap" id="content">
   <!-- DEMO -->
   <section id="tab-demo" role="tabpanel">
+    <div class="section-head"><p class="eyebrow">Live demo</p><h2>Four steps. Real attacks.</h2><p>Every attack email here was written by a real attacker in Microsoft&rsquo;s LLMail-Inject challenge.</p></div>
     <div class="steps" id="steps"></div>
     <div id="stage"></div>
     <div class="demo-nav">
-      <button class="btn" id="prev">← Back</button>
+      <button class="btn" id="prev">Back</button>
       <span class="muted small">Arrow keys move between steps · Enter runs the step</span>
       <button class="btn primary" id="next">Next →</button>
     </div>
@@ -185,6 +243,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted)}
 
   <!-- INBOX -->
   <section id="tab-inbox" role="tabpanel" hidden>
+    <div class="section-head"><p class="eyebrow">Inbox</p><h2>See what reaches your agent.</h2><p>A mixed inbox of real attacks and ordinary mail. Flip the firewall off to compare.</p></div>
     <div class="inbox-bar">
       <div class="summary" id="inbox-summary"></div>
       <label class="switch small"><input type="checkbox" id="show-labels"><span class="track"></span><span>Show true labels</span></label>
@@ -198,6 +257,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted)}
 
   <!-- TRY -->
   <section id="tab-try" role="tabpanel" hidden>
+    <div class="section-head"><p class="eyebrow">Try your own</p><h2>Paste any email. Instant verdict.</h2><p>The same rules, running live in this page as you type.</p></div>
     <div class="presets" id="presets"></div>
     <div class="try">
       <div class="panel pad">
@@ -211,6 +271,7 @@ footer{margin-top:28px;font-size:12.5px;color:var(--muted)}
 
   <!-- NUMBERS -->
   <section id="tab-numbers" role="tabpanel" hidden>
+    <div class="section-head"><p class="eyebrow">Numbers &amp; limits</p><h2>Measured on mail it never saw.</h2><p>Rules were written on a separate dev split. Everything here is held out, with its sample size.</p></div>
     <div id="numbers"></div>
   </section>
 
@@ -407,6 +468,7 @@ const el = (tag, attrs = {}, ...kids) => {
     if (k === "class") e.className = v;
     else if (k === "text") e.textContent = v;
     else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k.startsWith("aria-")) e.setAttribute(k, String(v));
     else if (v !== false && v != null) e.setAttribute(k, v === true ? "" : v);
   }
   for (const kid of kids.flat()) if (kid != null) e.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
@@ -522,7 +584,7 @@ function verdictBlock(v, { animate = false } = {}) {
 }
 
 /* ---------- tabs ---------- */
-const tabs = [...document.querySelectorAll("nav.tabs button")];
+const tabs = [...document.querySelectorAll(".tabs button")];
 let tabInit = {};
 function showTab(name) {
   for (const b of tabs) b.setAttribute("aria-selected", b.dataset.tab === name);
@@ -531,6 +593,10 @@ function showTab(name) {
   try { localStorage.setItem("fw-tab", name); } catch (_) {}
 }
 tabs.forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
+document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => {
+  showTab(b.dataset.go);
+  document.getElementById("content").scrollIntoView({ behavior: "smooth", block: "start" });
+}));
 $("#fw-on").addEventListener("change", () => {
   $("#fw-label").textContent = firewallOn() ? "Firewall on" : "Firewall off";
   if (tabInit.inbox) renderInbox();
@@ -552,7 +618,7 @@ function renderSteps() {
     onclick: () => { step = i; renderStep(); }
   }, el("span", { class: "n" }, i + 1), t)));
   $("#prev").disabled = step === 0;
-  $("#next").textContent = step === STEPS.length - 1 ? "Start over" : "Next →";
+  $("#next").textContent = step === STEPS.length - 1 ? "Start over" : "Next";
 }
 
 function renderStep(animate = true) {
@@ -809,7 +875,7 @@ function initNumbers() {
       el("div", { class: "grid2" },
         el("div", { class: "panel pad" }, el("h3", { style: "margin-top:0" }, "Headline"), t1),
         el("div", { class: "panel pad" }, el("h3", { style: "margin-top:0" }, "Most common signals on attacks"), t3)),
-      el("div", { class: "callout", style: "margin:16px 0" },
+      el("div", { class: "callout numbers-callout", style: "margin:20px 0" },
         el("b", {}, "Honest limitations. "),
         "Every LLMail-Inject attack targets one simulated assistant and one action (send an email), so these are not a sample of real inbox mail. The benign set is 104 emails we wrote with Claude; synthetic mail is easier to separate than real mail, and we saw it while writing rules. Plain-language requests get through. A published rule list is easy to evade. ",
         el("b", {}, "If it fails: "), "the team shipping the agent is accountable; they find out from a log of every send paired with the email that triggered it."),
