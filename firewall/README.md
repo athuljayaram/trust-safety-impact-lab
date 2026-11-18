@@ -7,6 +7,7 @@ A layer between "email arrives" and "agent reads it". Every email gets `allow`, 
 - **quarantine**: held for a human. The agent only sees "1 email held for review".
 
 ```bash
+python3 firewall/demo.py              # 3-minute demo: attack, verdict, two numbers, a miss
 ./run.sh                              # fetch data (first run only), score, write report.html
 python3 firewall/evaluate.py --misses 10   # print attacks that still get through
 python3 firewall/evaluate.py --fps         # print benign mail we wrongly flagged

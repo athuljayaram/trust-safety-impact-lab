@@ -25,7 +25,7 @@ Anyone who lets an AI assistant read their email. A stranger sends one email tha
 
 **2. What we built,** and the one command that runs it:
 
-An inbox firewall: a rule layer that returns allow / strip / quarantine with reasons for every email before an agent reads it, plus an evaluator that writes `report.html`. Run: `./run.sh` (Python 3.9+, standard library only, no API key). Details in `firewall/README.md`.
+An inbox firewall: a rule layer that returns allow / strip / quarantine with reasons for every email before an agent reads it, plus an evaluator that writes `report.html`. Run: `./run.sh`; demo: `python3 firewall/demo.py` (Python 3.9+, standard library only, no API key). Details in `firewall/README.md`.
 
 **3. Data we used:** dataset ids from `datasets.json`, how many rows, date range:
 
