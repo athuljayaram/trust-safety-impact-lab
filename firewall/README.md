@@ -1,5 +1,7 @@
 # Inbox Firewall (Track 1A)
 
+**Live demo:** https://athuljayaram.github.io/trust-safety-impact-lab/report.html
+
 A layer between "email arrives" and "agent reads it". Every email gets `allow`, `strip` or `quarantine`, with reasons.
 
 - **allow**: the agent reads it unchanged.
