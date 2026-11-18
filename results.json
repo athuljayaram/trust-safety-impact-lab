@@ -1,0 +1,139 @@
+{
+  "attack_caught": {
+    "n": 838,
+    "k": 698,
+    "pct": 83.3
+  },
+  "attack_quarantined": {
+    "n": 838,
+    "k": 529,
+    "pct": 63.1
+  },
+  "caught_of_attacks_that_sent_email": {
+    "n": 55,
+    "k": 51,
+    "pct": 92.7
+  },
+  "caught_of_attacks_that_evaded_challenge_defense": {
+    "n": 380,
+    "k": 322,
+    "pct": 84.7
+  },
+  "benign_false_positive": {
+    "n": 104,
+    "k": 4,
+    "pct": 3.8
+  },
+  "benign_quarantined": {
+    "n": 104,
+    "k": 3,
+    "pct": 2.9
+  },
+  "deepset_benign_false_positive": {
+    "n": 399,
+    "k": 0,
+    "pct": 0.0
+  },
+  "deepset_injection_caught": {
+    "n": 263,
+    "k": 24,
+    "pct": 9.1
+  },
+  "caught_by_level": {
+    "level1": {
+      "n": 400,
+      "k": 328,
+      "pct": 82.0
+    },
+    "level2": {
+      "n": 86,
+      "k": 78,
+      "pct": 90.7
+    },
+    "level3": {
+      "n": 137,
+      "k": 133,
+      "pct": 97.1
+    },
+    "level4": {
+      "n": 215,
+      "k": 159,
+      "pct": 74.0
+    }
+  },
+  "top_signals_on_attacks": [
+    [
+      "chat-role token",
+      391
+    ],
+    [
+      "quoted payload to an address",
+      305
+    ],
+    [
+      "send-to-address with dictated body",
+      301
+    ],
+    [
+      "mixed-script instruction block",
+      285
+    ],
+    [
+      "tool-call syntax",
+      86
+    ],
+    [
+      "exact-payload demand",
+      54
+    ],
+    [
+      "hurry + act-before-replying",
+      50
+    ],
+    [
+      "addresses the AI",
+      43
+    ],
+    [
+      "hidden HTML text",
+      24
+    ],
+    [
+      "override language",
+      20
+    ],
+    [
+      "zero-width characters",
+      19
+    ],
+    [
+      "fake conversation turn",
+      13
+    ]
+  ],
+  "signals_on_benign": [
+    [
+      "override language",
+      2
+    ],
+    [
+      "tool-call syntax",
+      1
+    ],
+    [
+      "chat-role token",
+      1
+    ]
+  ],
+  "phase2_caught": {
+    "n": 365,
+    "k": 276,
+    "pct": 75.6
+  },
+  "phase2_caught_of_attacks_that_sent_email": {
+    "n": 38,
+    "k": 27,
+    "pct": 71.1
+  },
+  "split": "attacks_test.jsonl"
+}
