@@ -3,10 +3,11 @@
 A layer between "email arrives" and "agent reads it". Every email gets `allow`, `strip` or `quarantine`, with reasons.
 
 - **allow**: the agent reads it unchanged.
-- **strip**: hidden HTML, chat-role tokens and fake data boundaries are removed, and the email is marked untrusted, so any send it leads to needs a human to confirm.
+- **strip**: the matched markup (chat-role tokens, fake data boundaries, hidden-text CSS) is replaced with `[removed]`; the surrounding text stays, so the email is also marked untrusted and any send it leads to needs a human to confirm.
 - **quarantine**: held for a human. The agent only sees "1 email held for review".
 
 ```bash
+open report.html                      # live app: demo, inbox, try-your-own, numbers (built by evaluate.py)
 python3 firewall/demo.py              # 3-minute demo: attack, verdict, two numbers, a miss
 ./run.sh                              # fetch data (first run only), score, write report.html
 python3 firewall/evaluate.py --misses 10   # print attacks that still get through
@@ -14,7 +15,7 @@ python3 firewall/evaluate.py --fps         # print benign mail we wrongly flagge
 echo "..." | python3 firewall/firewall.py  # check one email body
 ```
 
-Python 3.9+, standard library only, no API key.
+Python 3.9+, standard library only, no API key. `report.html` runs the same rules in the browser (`firewall.js`); `python3 firewall/parity.py` checks both engines give identical verdicts (needs node).
 
 ## How it was built honestly
 

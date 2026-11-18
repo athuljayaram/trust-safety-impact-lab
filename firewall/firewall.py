@@ -144,6 +144,18 @@ def inspect(subject, body):
     return Verdict(action, score, reasons, cleaned if action != "quarantine" else "")
 
 
+def export_spec():
+    """Everything the browser engine (firewall.js) needs, so the rules have one source."""
+    return {
+        "quarantine_at": QUARANTINE_AT,
+        "strip_at": STRIP_AT,
+        "signals": [{"name": n, "weight": w, "pattern": p, "strippable": s} for n, w, p, s in SIGNALS],
+        "zero_width": ZERO_WIDTH.pattern,
+        "b64": B64.pattern,
+        "camel_run": CAMEL_RUN.pattern,
+    }
+
+
 if __name__ == "__main__":
     import sys
     body = sys.stdin.read()
